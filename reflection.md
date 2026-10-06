@@ -20,30 +20,22 @@ Document at least 3 bugs you found. Add rows as needed.
 
 ## 2. How did you use AI as a teammate?
 
-- Which AI tools did you use on this project (for example: ChatGPT, Gemini, Copilot)?
-- Give one example of an AI suggestion that was correct (including what the AI suggested and how you verified the result).
-- Give one example of an AI suggestion you did not accept as written (including what the AI suggested, why you rejected or changed it, and how you verified your version). It does not have to be a suggestion that was wrong: over-engineered, out of scope, harder to read, or a poor fit for this codebase all count.
+I used ChatGPT as the AI coding assistant for the entire debugging process. One correct suggestion was to move the reusable game rules out of `app.py` and into `logic_utils.py`, then test those functions directly with pytest; after the refactor, all seven tests passed and the repaired behavior also worked in the live Streamlit app. I did not accept every possible cleanup as necessary: extra UI polish and unrelated feature changes would have made the project larger without helping reproduce or fix the three bugs I actually observed. I kept the repair focused on the documented glitches and verified the result by running both pytest and the live game.
 
 ---
 
 ## 3. Debugging and testing your fixes
 
-- How did you decide whether a bug was really fixed?
-- Describe at least one test you ran (manual or using pytest)  
-  and what it showed you about your code.
-- Did AI help you design or understand any tests? How?
+I considered a bug fixed only after the corrected behavior worked in both an automated test and the running Streamlit app. For example, the regression test for a very low guess against a secret of 82 checks that the logical outcome is "Too Low" and that the displayed hint tells the player to go higher. I ran `python3 -m pytest` on my Mac and all seven tests passed in 0.02 seconds. ChatGPT helped design the regression tests around the exact bugs that were reproduced before the code was changed.
 
 ---
 
 ## 4. What did you learn about Streamlit and state?
 
-- How would you explain Streamlit "reruns" and session state to a friend who has never used Streamlit?
+Streamlit reruns the Python script from top to bottom whenever the user interacts with a widget, so normal local variables do not automatically represent a persistent game. `st.session_state` is the place to keep values that must survive those reruns, such as the secret number, score, attempt count, game status, and history. I also learned that resetting a game means resetting all related state together; changing only the secret or attempt count can leave the app in an old won/lost state. Using a single reset function made that behavior much easier to reason about.
 
 ---
 
 ## 5. Looking ahead: your developer habits
 
-- What is one habit or strategy from this project that you want to reuse in future labs or projects?
-  - This could be a testing habit, a prompting strategy, or a way you used Git.
-- What is one thing you would do differently next time you work with AI on a coding task?
-- In one or two sentences, describe how this project changed the way you think about AI generated code.
+One habit I want to reuse is reproducing a bug first, writing down the expected and actual behavior, and then adding a regression test for the exact failure before considering the repair complete. I also want to keep using small, meaningful Git commits so the debugging history is easy to follow instead of making one large commit at the end. Next time I use AI for coding, I would give it one clearly reproduced bug at a time and require a test that proves each proposed fix. This project made me treat AI-generated code as a starting point that still needs direct verification rather than assuming that code is correct because it looks reasonable.
