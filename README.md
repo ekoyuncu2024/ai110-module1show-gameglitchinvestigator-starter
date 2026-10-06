@@ -2,53 +2,54 @@
 
 ## 🚨 The Situation
 
-You asked an AI to build a simple "Number Guessing Game" using Streamlit.
-It wrote the code, ran away, and now the game is unplayable. 
-
-- You can't win.
-- The hints lie to you.
-- The secret number seems to have commitment issues.
+This project is a Streamlit number-guessing game that started with several deliberate logic and state-management bugs. The goal was to reproduce the glitches, use AI-assisted debugging to repair them, refactor the core logic into testable functions, and verify the result with pytest and live testing.
 
 ## 🛠️ Setup
 
 1. Install dependencies: `pip install -r requirements.txt`
-2. Run the broken app: `python -m streamlit run app.py`
+2. Run the app: `python -m streamlit run app.py`
+3. Run the tests: `python -m pytest`
 
-## 🕵️‍♂️ Your Mission
+## 🕵️‍♂️ What Was Broken
 
-1. **Play the game.** Open the "Developer Debug Info" tab in the app to see the secret number. Try to win.
-2. **Find the State Bug.** Why does the secret number change every time you click "Submit"? Ask ChatGPT: *"How do I keep a variable from resetting in Streamlit when I click a button?"*
-3. **Fix the Logic.** The hints ("Higher/Lower") are wrong. Fix them.
-4. **Refactor & Test.** - Move the logic into `logic_utils.py`.
-   - Run `pytest` in your terminal.
-   - Keep fixing until all tests pass!
+The initial version had several reproducible problems:
 
-## 📝 Document Your Experience
+- The HIGHER/LOWER hints were reversed.
+- The attempts-left display could disagree with the game-over state.
+- Clicking **New Game** after losing did not fully reset the game status.
+- The comparison logic could alternate between numeric and string versions of the secret.
+- Core game logic was still embedded in `app.py` instead of being isolated for testing.
 
-- [ ] Describe the game's purpose.
-- [ ] Detail which bugs you found.
-- [ ] Explain what fixes you applied.
+## 🔧 What Was Fixed
+
+The reusable game rules were moved into `logic_utils.py`, including guess parsing, comparison logic, hint generation, difficulty ranges, and score updates. The Streamlit state reset was centralized so a new game resets the secret, attempts, score, status, history, and difficulty-specific state together. The hint direction and attempt-count behavior were corrected, and regression tests were added for the original failures.
 
 ## 📸 Demo Walkthrough
 
-Describe your fixed game in numbered steps so a reader can follow along without watching a video:
-
-1. <!-- Describe this step -->
-2. <!-- Describe this step -->
-3. <!-- Describe this step -->
-4. <!-- Describe this step -->
-5. <!-- Add more steps as needed -->
-
-**Screenshot** *(optional)*: <!-- Insert a screenshot of your fixed, winning game here -->
+1. Start the app on **Normal** difficulty, which uses the range 1 to 100.
+2. Open **Developer Debug Info** to view the secret number for testing.
+3. Enter a guess below the secret; the game correctly responds **Go HIGHER!**
+4. Enter a guess above the secret; the game correctly responds **Go LOWER!**
+5. Enter the exact secret number; the game displays the win message and final score.
+6. Click **New Game 🔁**; the attempts, score, history, game status, and secret reset correctly and the game is immediately playable again.
+7. Change the difficulty to **Easy**; the displayed range changes to 1 to 20 and a new secret is generated inside that range.
 
 ## 🧪 Test Results
 
-```
-# Paste your pytest output here, e.g.:
-# pytest tests/
-# ========================= X passed in 0.XXs =========================
+The repaired project was tested locally on macOS with Python 3.14.8 and pytest 9.1.1:
+
+```text
+============================= test session starts ==============================
+platform darwin -- Python 3.14.8, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/emirkoyuncu/codepath-game/ai110-module1show-gameglitchinvestigator-starter
+plugins: anyio-4.15.1
+collected 7 items
+
+tests/test_game_logic.py .......                                         [100%]
+
+============================== 7 passed in 0.02s ===============================
 ```
 
-## 🚀 Stretch Features
+## 📝 AI-Assisted Development
 
-- [ ] [If you choose to complete Challenge 4, describe the Enhanced UI changes here — a screenshot is optional]
+ChatGPT was used as the AI coding assistant to inspect the starter code, identify the causes of the reproduced bugs, refactor the logic, create regression tests, and help document the debugging process. Each repair was checked against the observed behavior, and the final version was verified both with pytest and by running the Streamlit app manually.
