@@ -4,9 +4,7 @@ Answer each question in 3 to 5 sentences. Be specific and honest about what actu
 
 ## 1. What was broken when you started?
 
-- What did the game look like the first time you ran it?
-- List at least two concrete bugs you noticed at the start  
-  (for example: "the hints were backwards").
+The game opened normally and let me choose a difficulty and enter guesses, but its behavior quickly became inconsistent. When the secret number was 82, I entered a very large negative number and the game told me to go lower even though the correct direction was higher. The attempt counter was also off: the page still showed one attempt left while simultaneously reporting that I was out of attempts. After losing, clicking New Game reset the displayed attempt count to eight, but the game still said "Game over. Start a new game to try again," so it was not actually playable again.
 
 **Bug Reproduction Log**
 
@@ -14,9 +12,9 @@ Document at least 3 bugs you found. Add rows as needed.
 
 | Input | Expected Behavior | Actual Behavior | Console Output / Error |
 |-------|-------------------|-----------------|------------------------|
-| | | | |
-| | | | |
-| | | | |
+| Entered a very large negative number while the secret was 82 | The hint should tell me to go higher | The game displayed "Go LOWER!" | none |
+| Submitted the final wrong guess on Normal difficulty | The game-over message and attempts-left display should agree that no attempts remain | The game said "Out of attempts!" while the page still showed "Attempts left: 1" | none |
+| Clicked **New Game** after losing | A fresh game should start and accept guesses | The attempt count reset to 8, but the app still displayed "Game over. Start a new game to try again." | none |
 
 ---
 
